@@ -1,0 +1,3 @@
+/Users/chihiro/JolieJoli/research/object-tracking/MISC/face_tracking_with_dlibFace/cmake-build-release/CMakeFiles/rebuild_cache.dir
+/Users/chihiro/JolieJoli/research/object-tracking/MISC/face_tracking_with_dlibFace/cmake-build-release/CMakeFiles/edit_cache.dir
+/Users/chihiro/JolieJoli/research/object-tracking/MISC/face_tracking_with_dlibFace/cmake-build-release/CMakeFiles/tracker.dir

@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 {
 
 
-    dlib::shape_predictor shape;
-    dlib::deserialize("/Users/chihiro/Programs/oss/dlib/shape_predictor_68_face_landmarks.dat") >> shape;
+    dlib::shape_predictor shapePredictor;
+    dlib::deserialize("/Users/chihiro/Programs/oss/dlib/shape_predictor_68_face_landmarks.dat") >> shapePredictor;
 
     // "BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"
     Ptr<Tracker> tracker = Tracker::create("KCF");
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
         auto dlibRects = faceDetector(dlibImage);
         if (dlibRects.size()) {
             bbox = Rect2d(dlibRects[0].left(), dlibRects[0].top(), dlibRects[0].width(), dlibRects[0].height());
+            tracker->init(frame, bbox);
             hasBBox = true;
         } else {
             hasBBox = false;
@@ -67,7 +68,6 @@ int main(int argc, char **argv)
         ElapsedTimer interval("Tracker");
         if (!hasBBox) {
             redetect();
-            tracker->init(frame, bbox);
             rectangle(frame, bbox, Scalar(0,0,255), 2,8,0);
         } else if (count%10 == 0) {
             redetect();
@@ -75,6 +75,13 @@ int main(int argc, char **argv)
         } else {
             bool ok = tracker->update(frame, bbox);
             rectangle(frame, bbox, Scalar(255, 0, 0), 2, 1);
+        }
+
+        if (hasBBox) {
+            dlib::full_object_detection shape = shapePredictor(dlib::cv_image<dlib::bgr_pixel>(frame), dlib::rectangle(bbox.x, bbox.y, bbox.x + bbox.width, bbox.y + bbox.height));
+            for (int i = 0; i < shape.num_parts(); ++i) {
+                cv::circle(frame, cv::Point(shape.part(i).x(),shape.part(i).y()), 1, cv::Scalar(0,255,255));
+            }
         }
 
         interval.end();
